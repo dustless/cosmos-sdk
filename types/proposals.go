@@ -1,9 +1,15 @@
 package types
 
+const (
+	MaxDescriptionLength int = 5000
+	MaxTitleLength       int = 140
+)
+
 // ProposalContent is an interface that has title, description, and proposaltype for the Proposal
 type ProposalContent interface {
 	GetTitle() string
 	GetDescription() string
+	ProposalRoute() string
 	ProposalType() string
 }
 
@@ -20,6 +26,23 @@ func NewProposalAbstract(title, description string) ProposalAbstract {
 	}
 }
 
+func (abs ProposalAbstract) ValidateBasic() Error {
+	// XXX
+	if len(abs.Title) == 0 {
+
+	}
+	if len(abs.Title) > MaxTitleLength {
+
+	}
+	if len(abs.Description) == 0 {
+
+	}
+	if len(abs.Description) > MaxDescriptionLength {
+
+	}
+	return nil
+}
+
 // nolint
-func (tp ProposalAbstract) GetTitle() string       { return tp.Title }
-func (tp ProposalAbstract) GetDescription() string { return tp.Description }
+func (abs ProposalAbstract) GetTitle() string       { return abs.Title }
+func (abs ProposalAbstract) GetDescription() string { return abs.Description }
