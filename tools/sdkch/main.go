@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -124,9 +125,19 @@ func addEntryFile(changesDir, sectionDir, stanzaDir string) {
 	fmt.Fprintf(os.Stderr, "Written to %s\n", filepath)
 }
 
+var filenameInvalidChars = regexp.MustCompile(`[^a-zA-Z0-9-_]`)
+
 func generateFileName(line string) string {
-	runesReplacer := strings.NewReplacer("[", "", "]", "", "#", "", `\`, "", ",", "", ".", "", ";", "", " ", "-")
-	return runesReplacer.Replace(strings.TrimSpace(line))
+	var chunks []string
+	subsWithInvalidCharsRemoved := strings.Split(filenameInvalidChars.ReplaceAllString(line, " "), " ")
+	for _, sub := range subsWithInvalidCharsRemoved {
+		sub = strings.TrimSpace(sub)
+		if len(sub) != 0 {
+			chunks = append(chunks, sub)
+		}
+	}
+
+	return strings.Join(chunks, "-")
 }
 
 func generateChangelog(changesDir, version string) {
